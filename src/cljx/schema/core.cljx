@@ -1054,7 +1054,7 @@
    ==> {:foo (not (integer? 1.2)), :bar (not (instance? java.lang.String :not-a-string))}
 
    See (doc schema.core) for details of the :- syntax for record elements.
-
+  
    Moreover, optional arguments extra-key-schema? and extra-validator-fn? can be
    passed to augment the record schema.
     - extra-key-schema is a map schema that defines validation for additional
@@ -1131,9 +1131,6 @@
   (macros/assert! (fn? f) "Non-function %s" (utils/type-of f))
   (or (utils/class-schema (utils/fn-schema-bearer f))
       (macros/safe-get (meta f) :schema)))
-
-;; work around bug in extend-protocol (refers to bare 'fn, so we can't exclude it).
-#+clj (when-not clj-1195-fixed? (ns-unmap *ns* 'fn))
 
 (defmacro fn
   "s/fn : s/defn :: clojure.core/fn : clojure.core/defn

@@ -1,11 +1,12 @@
 (ns schema.experimental.generators-test
-  (:use clojure.test)
+  #+clj (:use clojure.test)
   (:require
    [clojure.test.check.properties :as properties]
    [clojure.test.check.generators :as check-generators]
    [clojure.test.check.clojure-test :as check-clojure-test]
    [schema.core :as s]
-   [schema.experimental.generators :as generators]))
+   [schema.experimental.generators :as generators]
+   #+cljs [cljs.test :refer-macros [deftest is testing]]))
 
 
 (def OGInner
@@ -37,11 +38,11 @@
     (is (s/validate [FinalSchema] res))))
 
 (deftest simple-leaf-generators-smoke-test
-  (doseq [leaf-schema [double float long int short char byte boolean
-                       Double Float Long Integer Short Character Byte Boolean
-                       doubles floats longs ints shorts chars bytes booleans
-                       s/Str String s/Bool s/Num s/Int s/Keyword s/Symbol s/Inst
-                       Object s/Any (s/eq "foo") (s/enum :a :b :c)]]
+  (doseq [leaf-schema (concat #+clj [double float long int short char byte boolean
+                               Double Float Long Integer Short Character Byte Boolean
+                               doubles floats longs ints shorts chars bytes booleans]
+                              [s/Str #+clj String s/Bool s/Num s/Int s/Keyword s/Symbol s/Inst
+                               #+clj Object #+cljs js/Object s/Any (s/eq "foo") (s/enum :a :b :c)])]
     (testing (str leaf-schema)
       (is (= 10 (count (generators/sample 10 leaf-schema)))))))
 

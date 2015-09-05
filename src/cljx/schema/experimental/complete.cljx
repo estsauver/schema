@@ -9,9 +9,11 @@
    schema.spec.variant
    [schema.coerce :as coerce]
    [schema.core :as s]
-   [schema.macros :as macros]
+   #+clj [schema.macros :as macros]
    [schema.utils :as utils]
-   [schema.experimental.generators :as generators]))
+   [schema.experimental.generators :as generators])
+  #+cljs (:require-macros [schema.macros :as macros]
+                          [schema.core]))
 
 (def +missing+ ::missing)
 
@@ -29,7 +31,10 @@
   schema.spec.variant.VariantSpec
   (completer* [spec s sub-checker generator-opts]
     (let [g (apply generators/generator s generator-opts)]
-      (if (and (class? s) (isa? s clojure.lang.IRecord) (utils/class-schema s))
+      (if (and #+clj (class? s)
+               #+cljs (record? s)
+               #+clj (isa? s clojure.lang.IRecord)
+               (utils/class-schema s))
         (fn record-completer [x]
           (sub-checker (into (sample g) x)))
         (fn variant-completer [x]
@@ -39,7 +44,8 @@
 
   schema.spec.collection.CollectionSpec
   (completer* [spec s sub-checker generator-opts]
-    (if (instance? clojure.lang.APersistentMap s) ;; todo: pluggable
+    (if (instance? #+clj clojure.lang.APersistentMap
+                   #+cljs cljs.core.PersistentArrayMap s) ;; todo: pluggable
       (let [g (apply generators/generator s generator-opts)]
         (fn map-completer [x]
           (if (= +missing+ x)

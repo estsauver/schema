@@ -53,7 +53,7 @@
   [s]
   (->> (char-map)
        (sort-by #(- (count (second %))))
-       (reduce (fn [^String s [to from]] (string/replace s from (str to))) s)))
+       (reduce (fn [#+clj ^String s [to from]] (string/replace s from (str to))) s)))
 
 (defn fn-name
   "A meaningful name for a function that looks like its symbol, if applicable."

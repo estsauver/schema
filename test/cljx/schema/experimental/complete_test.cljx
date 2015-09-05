@@ -1,11 +1,11 @@
 (ns schema.experimental.complete-test
-  (:use clojure.test)
-  ;;(:use-macros [cemerick.cljs.test :only [is deftest testing]])
+  #+clj (:use clojure.test)
   (:require
    [schema.coerce :as coerce]
-   [schema.core :as s]
-   [schema.experimental.abstract-map :as abstract-map]
-   [schema.experimental.complete :as complete]))
+   [schema.core :as s :refer-macros [defrecord]]
+   [schema.experimental.abstract-map :as abstract-map :refer-macros [extend-schema]]
+   [schema.experimental.complete :as complete]
+   #+cljs [cljs.test :refer-macros [deftest is testing]]))
 
 (deftest complete-test
   (let [s [{:a s/Int :b s/Str}]
@@ -26,9 +26,17 @@
 (abstract-map/extend-schema Cat Animal [:cat] {:claws? s/Bool})
 (abstract-map/extend-schema Dog Animal [:dog] {:barks? s/Bool})
 
+#+clj
 (s/defrecord User
     [id :- long
      cash :- double
+     friends :- [User]
+     pet :- (s/maybe Animal)])
+
+#+cljs
+(defrecord User
+    [id :- s/Int
+     cash :- s/Num
      friends :- [User]
      pet :- (s/maybe Animal)])
 

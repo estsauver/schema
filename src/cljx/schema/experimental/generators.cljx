@@ -10,7 +10,8 @@
    schema.spec.leaf
    schema.spec.variant
    [schema.core :as s]
-   [schema.macros :as macros]))
+   #+clj [schema.macros :as macros])
+  #+cljs (:require-macros [schema.macros :as macros]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Private helpers for composite schemas
@@ -25,7 +26,8 @@
 
 (defn- sub-generator
   [{:keys [schema]}
-   {:keys [subschema-generator ^java.util.Map cache] :as params}]
+   {:keys [subschema-generator #+clj ^java.util.Map cache
+           #+cljs cache] :as params}]
   (spec/with-cache cache schema
     (fn [d] (#'generators/make-gen (fn [r s] (generators/call-gen @d r (quot s 2)))))
     (fn [] (subschema-generator schema params))))
@@ -91,33 +93,33 @@
       generators/int
       generators/s-pos-int))]))
 
-(def +primative-generators+
-  {Double (generators/fmap double gen-rational)
-   Float (generators/fmap float gen-rational)
-   Long generators/int
-   Integer (generators/fmap unchecked-int generators/int)
-   Short (generators/fmap unchecked-short generators/int)
-   Character (generators/fmap unchecked-char generators/int)
-   Byte (generators/fmap unchecked-byte generators/int)
-   Boolean generators/boolean})
+#+clj (def +primative-generators+
+        {Double (generators/fmap double gen-rational)
+         Float (generators/fmap float gen-rational)
+         Long generators/int
+         Integer (generators/fmap unchecked-int generators/int)
+         Short (generators/fmap unchecked-short generators/int)
+         Character (generators/fmap unchecked-char generators/int)
+         Byte (generators/fmap unchecked-byte generators/int)
+         Boolean generators/boolean})
 
 (def +simple-leaf-generators+
   (merge
-   +primative-generators+
+   #+clj +primative-generators+
    {s/Str generators/string-ascii
     s/Bool generators/boolean
     s/Num (generators/one-of [generators/int (generators/fmap double gen-rational)])
     s/Int (generators/one-of
            [generators/int
             (generators/fmap unchecked-int generators/int)
-            (generators/fmap bigint generators/int)])
+            #+clj (generators/fmap bigint generators/int)])
     s/Keyword generators/keyword
-    clojure.lang.Keyword generators/keyword
+    #+clj clojure.lang.Keyword  #+cljs cljs.core/Keyword generators/keyword
     s/Symbol (generators/fmap (comp symbol name) generators/keyword)
-    Object generators/any
+    #+clj Object #+cljs js/Object generators/any
     s/Any generators/any
     s/Inst (generators/fmap (fn [ms] (java.util.Date. ms)) generators/int)}
-   (into {}
+   #+clj (into {}
          (for [[f ctor c] [[doubles double-array Double]
                            [floats float-array Float]
                            [longs long-array Long]
@@ -191,7 +193,9 @@
                       (composite-generator (s/spec s) params))))]
        (generators/fmap
         (s/validator schema)
-        (gen schema {:subschema-generator gen :cache (java.util.IdentityHashMap.)})))))
+        (gen schema {:subschema-generator gen
+                     :cache #+clj (java.util.IdentityHashMap.)
+                            #+cljs (atom {})})))))
 
 (s/defn sample :- [s/Any]
   "Sample k elements from generator."

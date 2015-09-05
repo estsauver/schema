@@ -41,11 +41,11 @@
 (defn foo-bar [])
 
 (deftest fn-name-test
-  (is (= "odd?" (utils/fn-name odd?)))
-  (is (= #+clj "schema.core-test/foo-bar" #+cljs "foo-bar"
+  (is (= #+clj "odd?" #+cljs "cljs$core$odd_QMARK_" (utils/fn-name odd?)))
+  (is (= #+clj "schema.core-test/foo-bar" #+cljs "schema$core_test$foo_bar"
          (utils/fn-name foo-bar)))
-  #+clj (is (= "schema.core-test$fn" (subs (utils/fn-name (fn foo [x] (+ x x))) 0 19)))
-  #+cljs (is (= "foo" (utils/fn-name (fn foo [x] (+ x x)))))
+  #+clj (is (= #+clj "schema.core-test$fn" #+cljs "schema$core_test$fn_name_test_test_$_foo" (subs (utils/fn-name (fn foo [x] (+ x x))) 0 19)))
+  #+cljs (is (= "schema$core_test$fn_name_test_test_$_foo" (utils/fn-name (fn foo [x] (+ x x)))))
   #+cljs (is (= "function" (utils/fn-name (fn [x] (+ x x))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -274,9 +274,9 @@
       (invalid! schema {:foo :bar} "(not (equal-keys? {:foo :bar}))")
       (invalid! schema {:foo 1} "(not (equal-keys? {:foo 1}))")
       (invalid! (s/conditional odd? s/Int) 2 "(not (odd? 2))")
-      (is (= '(conditional odd? Int)
+      (is (= #+clj '(conditional odd? Int)  #+cljs '(conditional cljs$core$odd_QMARK_ Int)
              (s/explain (s/conditional odd? s/Int))))
-      (is (= '(conditional odd? Int weird?)
+      (is (= #+clj '(conditional odd? Int weird?) #+cljs '(conditional cljs$core$odd_QMARK_ Int weird?)
              (s/explain (s/conditional odd? s/Int 'weird?)))))))
 
 (deftest cond-pre-test
