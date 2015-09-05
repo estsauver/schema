@@ -1,6 +1,6 @@
-(defproject prismatic/schema "1.0.2-SNAPSHOT"
+(defproject com.estsauver/schema "1.0.2-SNAPSHOT"
   :description "Clojure(Script) library for declarative data description and validation"
-  :url "http://github.com/prismatic/schema"
+  :url "http://github.com/estsauver/schema"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
@@ -25,10 +25,9 @@
                                    {:source-paths ["test/cljx"]
                                     :output-path "target/generated/test/cljs"
                                     :rules :cljs}]}}
-             :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0-alpha4"] [org.clojure/clojurescript "0.0-3308"]]}}
 
-  :aliases {"all" ["with-profile" "dev:dev,1.6:dev,1.8"]
+  :aliases {"all" ["with-profile" "dev:dev,1.8"]
             "deploy" ["do" "clean," "cljx" "once," "deploy" "clojars"]
             "test" ["do" "clean," "cljx" "once," "test," "with-profile" "dev" "cljsbuild" "test"]}
 
@@ -71,7 +70,7 @@
                                            :pretty-print true}}}}
 
   :codox {:src-uri-mapping {#"target/generated/src/clj" #(str "src/cljx/" % "x")}
-          :src-dir-uri "http://github.com/prismatic/schema/blob/master/"
+          :src-dir-uri "http://github.com/estsauver/schema/blob/master/"
           :src-linenum-anchor-prefix "L"}
 
   :signing {:gpg-key "66E0BF75"})
