@@ -73,4 +73,4 @@
           :src-dir-uri "http://github.com/estsauver/schema/blob/master/"
           :src-linenum-anchor-prefix "L"}
 
-  :signing {:gpg-key "66E0BF75"})
+  :signing {:gpg-key "02DDA09A"})
