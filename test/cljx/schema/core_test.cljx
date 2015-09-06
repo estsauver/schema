@@ -25,7 +25,7 @@
   (def Throwable js/Error))
 
 (deftest if-cljs-test
-  (is (= #+cljs true #+clj false (macros/if-cljs true false))))
+  (is (=  #+cljs true #+clj false (macros/if-cljs true false))))
 
 (deftest try-catchall-test
   (let [a (atom 0)]
@@ -274,9 +274,9 @@
       (invalid! schema {:foo :bar} "(not (equal-keys? {:foo :bar}))")
       (invalid! schema {:foo 1} "(not (equal-keys? {:foo 1}))")
       (invalid! (s/conditional odd? s/Int) 2 "(not (odd? 2))")
-      (is (= #+clj '(conditional odd? Int)  #+cljs '(conditional cljs$core$odd_QMARK_ Int)
+      (is (= #+clj '(conditional odd? Int)  #+cljs '(conditional cljs$core$odd_QMARK_ Int)))
       (invalid! (s/conditional odd? s/Int) "1" "(throws? (odd? \"1\"))")
-             (s/explain (s/conditional odd? s/Int))))
+      (s/explain (s/conditional odd? s/Int))
       (is (= #+clj '(conditional odd? Int weird?) #+cljs '(conditional cljs$core$odd_QMARK_ Int weird?)
              (s/explain (s/conditional odd? s/Int 'weird?)))))))
 
